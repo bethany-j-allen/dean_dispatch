@@ -57,14 +57,18 @@ counts <- arrange(counts, desc(n))
 counts$continent <- factor(counts$continent, levels = counts$continent)
 
 # Plot
-ggplot(counts, aes(x = continent, y = n, label = paste(pct, "%", sep = ""))) +
-  geom_col() +
-  geom_text(position = position_dodge(width = .9),
-            vjust = -0.5,
-            size = 3) +
-  labs(x = "Continent", y = "Number of occurrences") +
-  theme_classic()
+plot1 <- ggplot(counts, aes(x = continent, y = n,
+                            label = paste(pct, "%", sep = ""))) +
+         geom_col() +
+         geom_text(position = position_dodge(width = .9),
+                   vjust = -0.5,
+                   size = 3) +
+         labs(x = "Continent", y = "Number of occurrences") +
+         theme_classic()
 
+# Save
+ggsave(file = "figures/Figure_1.pdf", plot = plot1,
+       width = 25, height = 15, units = "cm")
 
 ## Ankylosaurs
 # Filter
@@ -151,6 +155,10 @@ tyr_plot <- ggplot(tyr_counts, aes(x = continent, y = n,
   theme_classic()
 
 # Create and arrange composite plot
-ggarrange(ank_plot, ctp_plot, hdr_plot, tyr_plot,
+plot2 <- ggarrange(ank_plot, ctp_plot, hdr_plot, tyr_plot,
           labels = c("A", "B", "C", "D"),
           ncol = 2, nrow = 2)
+
+# Save
+ggsave(file = "figures/Figure_2.pdf", plot = plot2,
+       width = 30, height = 20, units = "cm")
