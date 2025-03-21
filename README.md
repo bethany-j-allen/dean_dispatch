@@ -1,3 +1,3 @@
 # dean_dispatch
 
-Data and code for Figure 1 in Current Biology dispatch on Dean et al. (2025)
+Data and code for figures in Current Biology dispatch (Allen 2025) on Dean et al. (2025)
