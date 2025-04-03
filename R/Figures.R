@@ -10,6 +10,7 @@ library(countrycode)
 library(rphylopic)
 library(gridExtra)
 library(ggpubr)
+library(ggthemes)
 
 # Read in data
 fossils <- read_csv("data/dinosauria.csv", skip = 19)
@@ -56,19 +57,18 @@ counts <- count(fossils, continent) %>% mutate(pct = round((n / sum(n) * 100), 1
 counts <- arrange(counts, desc(n))
 counts$continent <- factor(counts$continent, levels = counts$continent)
 
+# Generate colourblind palette for seven continents
+palette <- colorblind_pal()(8)
+
 # Plot
-plot1 <- ggplot(counts, aes(x = continent, y = n,
+all_plot <- ggplot(counts, aes(x = continent, y = n, fill = continent,
                             label = paste(pct, "%", sep = ""))) +
-         geom_col() +
+         geom_col(fill = palette[2:8], show.legend = FALSE) +
          geom_text(position = position_dodge(width = .9),
                    vjust = -0.5,
                    size = 3) +
          labs(x = "Continent", y = "Number of occurrences") +
          theme_classic()
-
-# Save
-ggsave(file = "figures/Figure_1.pdf", plot = plot1,
-       width = 25, height = 15, units = "cm")
 
 ## Ankylosaurs
 # Filter
@@ -80,9 +80,9 @@ ank_counts <- arrange(ank_counts, desc(n))
 ank_counts$continent <- factor(ank_counts$continent, levels = ank_counts$continent)
 
 # Plot
-ank_plot <- ggplot(ank_counts, aes(x = continent, y = n,
+ank_plot <- ggplot(ank_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
-       geom_col() +
+       geom_col(fill = palette[2:4], show.legend = FALSE) +
        geom_text(position = position_dodge(width = .9),
                  vjust = -0.5,
                  size = 3) +
@@ -101,15 +101,15 @@ ctp_counts <- arrange(ctp_counts, desc(n))
 ctp_counts$continent <- factor(ctp_counts$continent, levels = ctp_counts$continent)
 
 # Plot
-ctp_plot <- ggplot(ctp_counts, aes(x = continent, y = n,
+ctp_plot <- ggplot(ctp_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
-  geom_col() +
+  geom_col(fill = palette[2:3], show.legend = FALSE) +
   geom_text(position = position_dodge(width = .9),
             vjust = -0.5,
             size = 3) +
   labs(x = "Continent", y = "Number of occurrences") +
   add_phylopic(uuid = "0388ee19-b40e-46fd-92f5-8ef6b9075590",
-               x = 2, y = 500, alpha = 0.2, height = 125) +
+               x = 2, y = 500, alpha = 0.2, height = 100) +
   theme_classic()
 
 ## Hadrosaurs
@@ -122,9 +122,9 @@ hdr_counts <- arrange(hdr_counts, desc(n))
 hdr_counts$continent <- factor(hdr_counts$continent, levels = hdr_counts$continent)
 
 # Plot
-hdr_plot <- ggplot(hdr_counts, aes(x = continent, y = n,
+hdr_plot <- ggplot(hdr_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
-  geom_col() +
+  geom_col(fill = c(palette[2:6], palette[8], palette[7]), show.legend = FALSE) +
   geom_text(position = position_dodge(width = .9),
             vjust = -0.5,
             size = 3) +
@@ -143,9 +143,9 @@ tyr_counts <- arrange(tyr_counts, desc(n))
 tyr_counts$continent <- factor(tyr_counts$continent, levels = tyr_counts$continent)
 
 # Plot
-tyr_plot <- ggplot(tyr_counts, aes(x = continent, y = n,
+tyr_plot <- ggplot(tyr_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
-  geom_col() +
+  geom_col(fill = palette[2:4], show.legend = FALSE) +
   geom_text(position = position_dodge(width = .9),
             vjust = -0.5,
             size = 3) +
@@ -155,10 +155,10 @@ tyr_plot <- ggplot(tyr_counts, aes(x = continent, y = n,
   theme_classic()
 
 # Create and arrange composite plot
-plot2 <- ggarrange(ank_plot, ctp_plot, hdr_plot, tyr_plot,
-          labels = c("A", "B", "C", "D"),
-          ncol = 2, nrow = 2)
+composite_plot <- ggarrange(all_plot, ank_plot, ctp_plot, hdr_plot, tyr_plot,
+          labels = c("A", "B", "C", "D", "E"),
+          ncol = 3, nrow = 2)
 
 # Save
-ggsave(file = "figures/Figure_2.pdf", plot = plot2,
-       width = 30, height = 20, units = "cm")
+ggsave(file = "figures/Figure.pdf", plot = composite_plot,
+       width = 40, height = 25, units = "cm")
