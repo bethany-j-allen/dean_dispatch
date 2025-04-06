@@ -51,6 +51,20 @@ fossils$continent[which(fossils$cc == "CA")] <- "North America"
 fossils$continent[which(fossils$cc == "US")] <- "North America"
 fossils$continent[which(fossils$cc == "MX")] <- "North America"
 
+## Count loss of North American species
+# Subset to North American fossils
+NorthAmerican <- filter(fossils, continent == "North America")
+
+# Count Campanian species
+Campanian <- filter(NorthAmerican, bin_assignment == 77) %>%
+  filter(accepted_rank == "species")
+length(unique(Campanian$accepted_name))
+
+# Count Maastrichtian species
+Maastrichtian <- filter(NorthAmerican, bin_assignment == 78) %>%
+  filter(accepted_rank == "species")
+length(unique(Maastrichtian$accepted_name))
+
 ## All dinosaurs
 # Count and calculate percentages
 counts <- count(fossils, continent) %>% mutate(pct = round((n / sum(n) * 100), 1))
@@ -64,11 +78,15 @@ palette <- colorblind_pal()(8)
 all_plot <- ggplot(counts, aes(x = continent, y = n, fill = continent,
                             label = paste(pct, "%", sep = ""))) +
          geom_col(fill = palette[2:8], show.legend = FALSE) +
-         geom_text(position = position_dodge(width = .9),
+         geom_text(position = position_dodge(width = 0.9),
                    vjust = -0.5,
                    size = 3) +
          labs(x = "Continent", y = "Number of occurrences") +
          theme_classic()
+
+# Save
+ggsave(file = "figures/Figure_A.pdf", plot = all_plot,
+       width = 18, height = 12, units = "cm")
 
 ## Ankylosaurs
 # Filter
@@ -83,13 +101,17 @@ ank_counts$continent <- factor(ank_counts$continent, levels = ank_counts$contine
 ank_plot <- ggplot(ank_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
        geom_col(fill = palette[2:4], show.legend = FALSE) +
-       geom_text(position = position_dodge(width = .9),
+       geom_text(position = position_dodge(width = 0.9),
                  vjust = -0.5,
                  size = 3) +
        labs(x = "Continent", y = "Number of occurrences") +
        add_phylopic(uuid = "8a8a2525-e97d-4505-8085-7958f8d36137",
-                    x = 3, y = 120, alpha = 0.2, height = 20) +
+                    x = 2.75, y = 120, alpha = 0.2, height = 15) +
        theme_classic()
+
+# Save
+ggsave(file = "figures/Figure_B.pdf", plot = ank_plot,
+       width = 9, height = 12, units = "cm")
 
 ## Ceratopsids
 # Filter
@@ -104,13 +126,17 @@ ctp_counts$continent <- factor(ctp_counts$continent, levels = ctp_counts$contine
 ctp_plot <- ggplot(ctp_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
   geom_col(fill = palette[2:3], show.legend = FALSE) +
-  geom_text(position = position_dodge(width = .9),
+  geom_text(position = position_dodge(width = 0.9),
             vjust = -0.5,
             size = 3) +
   labs(x = "Continent", y = "Number of occurrences") +
   add_phylopic(uuid = "0388ee19-b40e-46fd-92f5-8ef6b9075590",
-               x = 2, y = 500, alpha = 0.2, height = 100) +
+               x = 2, y = 500, alpha = 0.2, height = 75) +
   theme_classic()
+
+# Save
+ggsave(file = "figures/Figure_C.pdf", plot = ctp_plot,
+       width = 9, height = 12, units = "cm")
 
 ## Hadrosaurs
 # Filter
@@ -125,13 +151,17 @@ hdr_counts$continent <- factor(hdr_counts$continent, levels = hdr_counts$contine
 hdr_plot <- ggplot(hdr_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
   geom_col(fill = c(palette[2:6], palette[8], palette[7]), show.legend = FALSE) +
-  geom_text(position = position_dodge(width = .9),
+  geom_text(position = position_dodge(width = 0.9),
             vjust = -0.5,
             size = 3) +
   labs(x = "Continent", y = "Number of occurrences") +
   add_phylopic(uuid = "76779b00-0150-406a-a443-23c534ec80fe",
                x = 6.25, y = 800, alpha = 0.2, height = 175) +
   theme_classic()
+
+# Save
+ggsave(file = "figures/Figure_D.pdf", plot = hdr_plot,
+       width = 18, height = 12, units = "cm")
 
 ## Tyrannosaurs
 # Filter
@@ -146,19 +176,23 @@ tyr_counts$continent <- factor(tyr_counts$continent, levels = tyr_counts$contine
 tyr_plot <- ggplot(tyr_counts, aes(x = continent, y = n, fill = continent,
                                    label = paste(pct, "%", sep = ""))) +
   geom_col(fill = palette[2:4], show.legend = FALSE) +
-  geom_text(position = position_dodge(width = .9),
+  geom_text(position = position_dodge(width = 0.9),
             vjust = -0.5,
             size = 3) +
   labs(x = "Continent", y = "Number of occurrences") +
   add_phylopic(uuid = "499fe1d6-a3c5-4219-a60e-d5ae93031bda",
-               x = 2.75, y = 275, alpha = 0.2, height = 75) +
+               x = 2.75, y = 275, alpha = 0.2, height = 65) +
   theme_classic()
 
+# Save
+ggsave(file = "figures/Figure_E.pdf", plot = tyr_plot,
+       width = 9, height = 12, units = "cm")
+
 # Create and arrange composite plot
-composite_plot <- ggarrange(all_plot, ank_plot, ctp_plot, hdr_plot, tyr_plot,
-          labels = c("A", "B", "C", "D", "E"),
-          ncol = 3, nrow = 2)
+#composite_plot <- ggarrange(all_plot, ank_plot, ctp_plot, hdr_plot, tyr_plot,
+#          labels = c("A", "B", "C", "D", "E"),
+#          ncol = 3, nrow = 2)
 
 # Save
-ggsave(file = "figures/Figure.pdf", plot = composite_plot,
-       width = 40, height = 25, units = "cm")
+#ggsave(file = "figures/Figure.pdf", plot = composite_plot,
+#       width = 40, height = 25, units = "cm")
